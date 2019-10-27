@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿using DoomLibrary;
 using DoomLibrary.WadFile;
 
 namespace Program
@@ -9,6 +8,9 @@ namespace Program
         public static void Main()
         {
             var wad = Wad.FromFile("DOOM.WAD");
+            var mapLoader = new MapLoader(wad);
+
+            var map = mapLoader.LoadByName("E1M1");
         }
     }
 }

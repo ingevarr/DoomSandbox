@@ -5,14 +5,14 @@ namespace DoomLibrary
     [Flags]
     public enum LinedefFlags : ushort
     {
-        Blocking = 0,
+        Blocking         = 0,
         BlockingMonsters = 1,
-        TwoSided = 1 << 1,
-        NotPegTop = 1 << 2,
-        NotPegBottom = 1 << 3,
-        Secret = 1 << 4,
-        BlockSound = 1 << 5,
-        NotDraw = 1 << 6,
-        Draw = 1 << 7
+        TwoSided         = 2,
+        NotPegTop        = 4,
+        NotPegBottom     = 8,
+        Secret           = 16,
+        BlockSound       = 32,
+        NotDraw          = 64,
+        Draw             = 128
     }
 }

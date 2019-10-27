@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
-using DoomLibrary.Utils;
+using static DoomLibrary.WadFile.WadConstants;
 
 namespace DoomLibrary.WadFile.Loading
 {
@@ -11,51 +10,59 @@ namespace DoomLibrary.WadFile.Loading
     {
         public static Wad Load(Stream wadStream)
         {
-            ReadOnlySpan<byte> wadBytes = wadStream.ReadAllToBytes().AsSpan();
+            //var readAllToBytes = wadStream.ReadAllToBytes();
+            if(!wadStream.CanSeek)
+                throw new ArgumentException($"Can't seek on the {wadStream}");
 
-            var header = ReadHeader(wadBytes[..12]);
-            var directories = ReadDirectories(wadBytes[(int) header.FirstDirectoryOffset..], header.DirectoriesCount);
+            using var binaryReader = new BinaryReader(wadStream, WadEncoding);
+            
+            var header = ReadHeader(binaryReader);
+            var directories = ReadDirectories(binaryReader, header);
+            var lumpsBytes = ReadLumpsBytes(binaryReader, header);
 
-            return new Wad(header, directories);
+            return new Wad(header, directories, lumpsBytes);
         }
 
-        private static WadHeader ReadHeader(in ReadOnlySpan<byte> headerBytes)
+        private static WadHeader ReadHeader(BinaryReader reader)
         {
-            var type = ParseWadType(Encoding.UTF8.GetString(headerBytes[..4]));
-            var directoriesCount = BitConverter.ToUInt32(headerBytes[4..8]);
-            var firstDirectoryOffset = BitConverter.ToUInt32(headerBytes[8..]);
+            Span<byte> typeChars = stackalloc byte[WadTypeStringLength];
+            reader.Read(typeChars);
+
+            var typeString = WadEncoding.GetString(typeChars);
+            var type = typeString switch
+            {
+                "IWAD" => WadType.IWad,
+                "PWAD" => WadType.PWad,
+                _ => throw new InvalidOperationException($"Can't parse Wad type {typeString}")
+            };
+
+            var directoriesCount = reader.ReadUInt32();
+            var firstDirectoryOffset = reader.ReadUInt32();
 
             return new WadHeader(type, directoriesCount, firstDirectoryOffset);
         }
 
-        private static WadType ParseWadType(string wadTypeString)
-            => wadTypeString switch
-            {
-                "IWAD" => WadType.IWad,
-                "PWAD" => WadType.PWad,
-                _ => throw new InvalidOperationException($"Can't parse Wad type {wadTypeString}")
-            };
-        
-        private static IReadOnlyCollection<WadDirectory> ReadDirectories(in ReadOnlySpan<byte> directoriesBytes, uint directoriesCount)
+        private static IReadOnlyList<WadDirectory> ReadDirectories(BinaryReader reader, WadHeader header)
         {
-            var directories = new WadDirectory[directoriesCount];
+            reader.BaseStream.Seek(header.FirstDirectoryOffset, SeekOrigin.Begin);
 
-            for (var i = 0; i < directories.Length; i++)
+            var directories = new WadDirectory[header.DirectoriesCount];
+            Span<char> nameSpan = stackalloc char[LumpNameSizeInBytes];
+            for (var i = 0; i < header.DirectoriesCount; i++)
             {
-                var directoryStart = i * 16;
-                var directoryEnds = directoryStart + 16;
-                directories[i] = ReadDirectory(directoriesBytes[directoryStart..directoryEnds]);
+                var lumpOffset = reader.ReadUInt32() - HeaderSizeInBytes;
+                var lumpSize = reader.ReadUInt32();
+                reader.Read(nameSpan);
+                var name = string.Intern(new string(nameSpan).TrimEnd('\0'));
+                directories[i] = new WadDirectory(lumpOffset, lumpSize, name);
             }
-
             return directories;
         }
 
-        private static WadDirectory ReadDirectory(in ReadOnlySpan<byte> directoryBytes)
+        private static byte[] ReadLumpsBytes(BinaryReader reader, WadHeader header)
         {
-            var lumpOffset = BitConverter.ToUInt32(directoryBytes[..4]);
-            var lumpSize = BitConverter.ToUInt32(directoryBytes[4..8]);
-            var lumpName = Encoding.UTF8.GetString(directoryBytes[8..]);
-            return new WadDirectory(lumpOffset, lumpSize, lumpName);
+            reader.BaseStream.Seek(HeaderSizeInBytes, SeekOrigin.Begin);
+            return reader.ReadBytes((int) (header.FirstDirectoryOffset - HeaderSizeInBytes));
         }
     }
 }
