@@ -1,9 +1,10 @@
 using System;
 using System.Runtime.CompilerServices;
 
-using DoomLibrary.WadFile;
+using Doom.DataPrimitives;
+using Doom.WadFile;
 
-namespace DoomLibrary 
+namespace Doom.GameMap 
 {
     public class MapLoader
     {

@@ -1,4 +1,6 @@
-namespace DoomLibrary
+using Doom.DataPrimitives;
+
+namespace Doom.GameMap
 {
     public sealed class MapData
     {

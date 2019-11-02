@@ -1,4 +1,4 @@
-namespace DoomLibrary 
+namespace Doom.GameMap 
 {
     internal enum MapLumpsIndexes : byte
     {

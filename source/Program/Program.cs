@@ -1,7 +1,7 @@
-﻿using DoomLibrary;
-using DoomLibrary.WadFile;
+﻿using Doom.GameMap;
+using Doom.WadFile;
 
-namespace Program
+namespace Doom
 {
     public static class Program
     {

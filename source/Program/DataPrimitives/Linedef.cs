@@ -1,4 +1,4 @@
-namespace DoomLibrary
+namespace Doom.DataPrimitives
 {
     public readonly struct Linedef
     {

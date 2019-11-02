@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 
-using static DoomLibrary.WadFile.WadConstants;
+using static Doom.WadFile.WadConstants;
 
-namespace DoomLibrary.WadFile.Loading
+namespace Doom.WadFile.Loading
 {
     internal static class WadLoader
     {

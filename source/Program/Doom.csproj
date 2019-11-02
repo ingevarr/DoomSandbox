@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DoomLibrary\DoomLibrary.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="DOOM.WAD">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

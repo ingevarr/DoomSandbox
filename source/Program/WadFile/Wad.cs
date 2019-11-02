@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using DoomLibrary.WadFile.Loading;
 
-namespace DoomLibrary.WadFile
+using Doom.WadFile.Loading;
+
+namespace Doom.WadFile
 {
     public sealed class Wad
     {

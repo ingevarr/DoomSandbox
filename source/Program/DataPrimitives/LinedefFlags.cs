@@ -1,6 +1,6 @@
 using System;
 
-namespace DoomLibrary
+namespace Doom.DataPrimitives
 {
     [Flags]
     public enum LinedefFlags : ushort

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace DoomLibrary.WadFile
+namespace Doom.WadFile
 {
     internal static class WadConstants
     {

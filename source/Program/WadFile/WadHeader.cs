@@ -1,4 +1,4 @@
-﻿namespace DoomLibrary.WadFile
+﻿namespace Doom.WadFile
 {
     public sealed class WadHeader
     {
