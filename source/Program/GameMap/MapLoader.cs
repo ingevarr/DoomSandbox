@@ -22,19 +22,19 @@ namespace Doom.GameMap
             return new MapData(vertexes, linedefs);
         }
 
-        private Vertex[] ReadVertexes(int mapIndex)
+        private Vertexes ReadVertexes(int mapIndex)
         {
-            var vertexesDirectory = wad.Directories[mapIndex + (int)MapLumpsIndexes.Vertexes];
+            var vertexesDirectory = wad.Directories[mapIndex + (int)LumpIndexInMap.Vertexes];
             if(vertexesDirectory.LumpName != "VERTEXES")
                 throw new Exception();
 
             var sizeOfVertex = Unsafe.SizeOf<Vertex>();
             var vertexes = new Vertex[vertexesDirectory.LumpSize / sizeOfVertex];
 
-            short minX = short.MaxValue;
-            short minY = short.MaxValue;
-            short maxX = short.MinValue;
-            short maxY = short.MinValue;
+            var minX = short.MaxValue;
+            var minY = short.MaxValue;
+            var maxX = short.MinValue;
+            var maxY = short.MinValue;
 
             var lump = GetLump((int) vertexesDirectory.LumpOffset, (int) vertexesDirectory.LumpSize);
             for (int i = 0, offset = 0; i < vertexes.Length; i++, offset = i * sizeOfVertex)
@@ -49,12 +49,12 @@ namespace Doom.GameMap
                 if (x < minX) minX = x;
                 if (y < minY) minY = y;
             }
-            return vertexes;
+            return new Vertexes(vertexes, minX, minY, maxX, maxY);
         }
 
         private Linedef[] ReadLinedefs(int mapIndex)
         {
-            var linedefsDirectory = wad.Directories[mapIndex + (int)MapLumpsIndexes.Linedefs];
+            var linedefsDirectory = wad.Directories[mapIndex + (int)LumpIndexInMap.Linedefs];
             if(linedefsDirectory.LumpName != "LINEDEFS")
                 throw new Exception();
 

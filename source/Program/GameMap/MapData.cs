@@ -4,15 +4,13 @@ namespace Doom.GameMap
 {
     public sealed class MapData
     {
-        public Vertex[] Vertexes { get; }
-        public short MinX;
-        public short MinY;
-        public short MaxX;
-        public short MaxY;
+        public Vertexes Vertexes { get; }
+        public uint VertexesCount => (uint) Vertexes.Data.Length;
+
 
         public Linedef[] Linedefs { get; }
 
-        internal MapData(Vertex[] vertexes, Linedef[] linedefs)
+        internal MapData(Vertexes vertexes, Linedef[] linedefs)
         {
             Vertexes = vertexes;
             Linedefs = linedefs;

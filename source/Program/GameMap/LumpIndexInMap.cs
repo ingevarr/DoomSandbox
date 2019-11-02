@@ -1,6 +1,6 @@
 namespace Doom.GameMap 
 {
-    internal enum MapLumpsIndexes : byte
+    internal enum LumpIndexInMap : byte
     {
         Things = 1,
         Linedefs,

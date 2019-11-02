@@ -30,18 +30,23 @@ namespace Doom
                                        Y = 200,
                                        WindowWidth = 1280,
                                        WindowHeight = 800,
-                                       WindowTitle = "Doom"
+                                       WindowTitle = "Doom",
                                    };
 
             var window = VeldridStartup.CreateWindow(ref windowCreateInfo);
             var graphicsDevice = VeldridStartup.CreateGraphicsDevice(window, GraphicsBackend.OpenGL);
 
             var resourceFactory = graphicsDevice.ResourceFactory;
-            var vertexBuffer = resourceFactory.CreateBuffer(new BufferDescription((uint) (Unsafe.SizeOf<Vertex>() * map.Vertexes.Length), BufferUsage.VertexBuffer));
-            graphicsDevice.UpdateBuffer(vertexBuffer, 0, map.Vertexes);
+            var vertexBuffer = resourceFactory.CreateBuffer(new BufferDescription((uint) (map.VertexesCount * Unsafe.SizeOf<Vertex>()), BufferUsage.VertexBuffer));
+            graphicsDevice.UpdateBuffer(vertexBuffer, 0, map.Vertexes.Data);
 
             var orthographicOffCenter 
-                = Matrix4x4.CreateOrthographicOffCenter(-768, 3808, -4864, -2048, 0.1f, 100f);
+                = Matrix4x4.CreateOrthographicOffCenter(map.Vertexes.Left, 
+                                                        map.Vertexes.Right, 
+                                                        map.Vertexes.Bottom, 
+                                                        map.Vertexes.Top, 
+                                                        0.1f, 
+                                                        100f);
             var ortho = resourceFactory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             graphicsDevice.UpdateBuffer(ortho, 0, orthographicOffCenter);
 
@@ -89,7 +94,7 @@ namespace Doom
 
                 cl.Begin();
                 cl.SetFramebuffer(graphicsDevice.SwapchainFramebuffer);
-                //cl.SetViewport(0, new Viewport(0,0, 300, 200, 0.1f, 100f));
+                //cl.SetViewport(0, new Viewport(0,0, window.Width / 10f, window.Height / 10f, 0.1f, 100f));
                 cl.ClearColorTarget(0, RgbaFloat.Black);
                 cl.SetPipeline(pipeline);
                 cl.SetVertexBuffer(0, vertexBuffer);
