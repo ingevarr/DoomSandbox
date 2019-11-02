@@ -31,6 +31,11 @@ namespace Doom.GameMap
             var sizeOfVertex = Unsafe.SizeOf<Vertex>();
             var vertexes = new Vertex[vertexesDirectory.LumpSize / sizeOfVertex];
 
+            short minX = short.MaxValue;
+            short minY = short.MaxValue;
+            short maxX = short.MinValue;
+            short maxY = short.MinValue;
+
             var lump = GetLump((int) vertexesDirectory.LumpOffset, (int) vertexesDirectory.LumpSize);
             for (int i = 0, offset = 0; i < vertexes.Length; i++, offset = i * sizeOfVertex)
             {
@@ -38,6 +43,11 @@ namespace Doom.GameMap
                 var x = BitConverter.ToInt16(vertexInLump[..2]);
                 var y = BitConverter.ToInt16(vertexInLump[2..]);
                 vertexes[i] = new Vertex(x, y);
+
+                if (x > maxX) maxX = x;
+                if (y > maxY) maxY = y;
+                if (x < minX) minX = x;
+                if (y < minY) minY = y;
             }
             return vertexes;
         }

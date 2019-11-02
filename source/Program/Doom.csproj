@@ -6,7 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Veldrid" Version="4.7.0" />
+    <PackageReference Include="Veldrid.SPIRV" Version="1.0.11" />
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="DOOM.WAD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Rendering\minimap-fragment.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Rendering\minimap-vertex.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
