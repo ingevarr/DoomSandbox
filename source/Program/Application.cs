@@ -6,7 +6,6 @@ using Doom.Input;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
-using Veldrid.Utilities;
 
 namespace Doom 
 {
@@ -17,7 +16,7 @@ namespace Doom
         private Game game;
         private Sdl2Window window;
         private RenderingContext renderingContext;
-        private InputTracker inputTracker;
+        private readonly InputTracker inputTracker;
 
         public Application()
         {
@@ -28,7 +27,6 @@ namespace Doom
         public void Run()
         {
             Initialize();
-            game.Initialize();
             RunLoop();
         }
 
@@ -45,10 +43,11 @@ namespace Doom
 
             window = VeldridStartup.CreateWindow(ref windowCreateInfo);
             var graphicsDevice = VeldridStartup.CreateGraphicsDevice(window, GraphicsBackend.OpenGL);
-            
-            var resourceFactory = new DisposeCollectorResourceFactory(graphicsDevice.ResourceFactory);
+            var resourceFactory = graphicsDevice.ResourceFactory;
             renderingContext = new RenderingContext(graphicsDevice, resourceFactory, resourceFactory.CreateCommandList());
+            
             game = new Game(inputTracker, renderingContext);
+            game.Initialize();
         }
 
         private void RunLoop()
@@ -72,7 +71,7 @@ namespace Doom
         {
             inputUpdater.Update(window.PumpEvents());
             game.Update(deltaTime);
-            game.Render(renderingContext);
+            game.Render();
         }
 
         public void Dispose()
